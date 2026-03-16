@@ -252,6 +252,109 @@
     color: var(--accent);
   }
 
+  /* Guarantee spectrum */
+  .spectrum {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin: 24px 0;
+  }
+  @media (max-width: 768px) { .spectrum { grid-template-columns: 1fr; } }
+  .spectrum-col { }
+  .spectrum-col h3 {
+    font-size: 1.1rem;
+    padding: 12px 16px;
+    border-radius: 8px 8px 0 0;
+    margin: 0;
+  }
+  .spectrum-col.deterministic h3 { background: rgba(63,185,80,0.15); color: var(--green); }
+  .spectrum-col.probabilistic h3 { background: rgba(248,81,73,0.15); color: var(--red); }
+  .spectrum-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-top: none;
+    padding: 16px;
+    font-size: 0.9rem;
+  }
+  .spectrum-item:last-child { border-radius: 0 0 8px 8px; }
+  .spectrum-item strong { color: var(--text); display: block; margin-bottom: 4px; }
+  .spectrum-item p { color: var(--muted); margin: 0; font-size: 0.85rem; }
+  .spectrum-item .why {
+    margin-top: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+  .why-good { background: rgba(63,185,80,0.08); color: var(--green); }
+  .why-bad { background: rgba(248,81,73,0.08); color: var(--red); }
+  .agent-stack {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 16px 0;
+  }
+  .agent-stack h4 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .agent-stack-badge {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+  }
+  .stack-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+  }
+  .stack-row:last-child { border-bottom: none; }
+  .stack-label {
+    flex-shrink: 0;
+    width: 160px;
+    color: var(--muted);
+  }
+  .stack-value { color: var(--text); }
+  .tag-det {
+    display: inline-block;
+    font-size: 0.65rem;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(63,185,80,0.15);
+    color: var(--green);
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .tag-prob {
+    display: inline-block;
+    font-size: 0.65rem;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(248,81,73,0.15);
+    color: var(--red);
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .critique-box {
+    background: var(--bg);
+    border-left: 3px solid var(--orange);
+    border-radius: 0 8px 8px 0;
+    padding: 20px;
+    margin: 24px 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .critique-box strong { color: var(--orange); }
+
   /* Key concepts */
   .concept-grid {
     display: grid;
@@ -307,6 +410,7 @@
   <div class="container">
     <a href="#threats">Threats</a>
     <a href="#checklist">Checklist</a>
+    <a href="#guarantees">Deterministic vs Probabilistic</a>
     <a href="#attack-chains">Attack Chains</a>
     <a href="#infra">Infrastructure</a>
     <a href="#credentials">Credentials</a>
@@ -413,6 +517,195 @@
         <div class="check-text"><strong>Tool/MCP skills are verified</strong><br>Integrity checks prevent supply chain attacks &rarr; <a href="#plugins">ClawSec</a>, <a href="#infra">IronShell</a></div>
       </li>
     </ul>
+  </div>
+</section>
+
+<!-- Deterministic vs Probabilistic -->
+<section id="guarantees">
+  <div class="container">
+    <h2>Deterministic vs. Probabilistic Protection</h2>
+    <p class="section-desc">The uncomfortable truth: most "AI security" tools are probabilistic — they <em>try</em> to catch leaks but an adversary can bypass them. Only architectural choices give you real guarantees.</p>
+
+    <div class="spectrum">
+      <div class="spectrum-col deterministic">
+        <h3>Deterministic (Guaranteed)</h3>
+        <div class="spectrum-item">
+          <strong>Credential never enters LLM context</strong>
+          <p>A broker/proxy makes the API call. The LLM says "query the DB" but never sees the password. Physically impossible to leak what you don't have.</p>
+          <div class="why why-good">Vault-MCP, AgentPassVault, 1Password Agentic, AgentGateway</div>
+        </div>
+        <div class="spectrum-item">
+          <strong>URL allowlist at network layer</strong>
+          <p>Agent process can only reach pre-approved domains. Even if prompt-injected, <code>fetch(evil.com)</code> gets blocked by the OS/firewall, not by the LLM "deciding" not to.</p>
+          <div class="why why-good">IronClaw (Rust allowlist), IronShell (VPC + security groups)</div>
+        </div>
+        <div class="spectrum-item">
+          <strong>WASM/container sandbox with no outbound network</strong>
+          <p>Tool code runs in a sandbox with zero network access. Can't exfiltrate because there's no socket to open.</p>
+          <div class="why why-good">IronClaw WASM sandbox, gVisor, Firecracker</div>
+        </div>
+        <div class="spectrum-item">
+          <strong>Short-lived, auto-expiring tokens</strong>
+          <p>Even if leaked, the token expires in minutes. Attacker's window is tiny. This is math, not hope.</p>
+          <div class="why why-good">HashiCorp Vault dynamic secrets, Aembit workload identity</div>
+        </div>
+        <div class="spectrum-item">
+          <strong>Human-in-the-loop gate (hard gate)</strong>
+          <p>Tool call literally blocks until a human approves in a separate channel. Not "the LLM asks permission" — the system enforces it.</p>
+          <div class="why why-good">AgentPassVault HITL, 1Password approval flow</div>
+        </div>
+      </div>
+
+      <div class="spectrum-col probabilistic">
+        <h3>Probabilistic (Best-Effort)</h3>
+        <div class="spectrum-item">
+          <strong>Prompt injection classifiers</strong>
+          <p>ML models that detect injection attempts. Good accuracy today, but adversarial examples will always exist. It's a cat-and-mouse game with no finish line.</p>
+          <div class="why why-bad">Llama Guard, Prompt Shields, NeMo Guardrails — helpful but bypassable</div>
+        </div>
+        <div class="spectrum-item">
+          <strong>Output scanning / redaction</strong>
+          <p>Regex or ML scanning LLM output for secrets before showing to user. Misses novel formats, base64-encoded secrets, or split-across-messages exfiltration.</p>
+          <div class="why why-bad">Presidio, GitGuardian — catches 90%+ but not 100%</div>
+        </div>
+        <div class="spectrum-item">
+          <strong>System prompt instructions ("never reveal secrets")</strong>
+          <p>Asking the LLM nicely to not leak. This is the weakest form of protection. Any prompt injection can override it.</p>
+          <div class="why why-bad">Zero security guarantee. Period.</div>
+        </div>
+        <div class="spectrum-item">
+          <strong>LLM-based tool call validation</strong>
+          <p>Using a second LLM to check if a tool call looks malicious. Better than nothing, but the validator LLM can also be tricked.</p>
+          <div class="why why-bad">ShieldAgent, LLamaFirewall — adds friction but not certainty</div>
+        </div>
+        <div class="spectrum-item">
+          <strong>Training data filtering</strong>
+          <p>Scanning training/RAG data for secrets before ingestion. Catches known patterns but novel encoding, steganography, or delayed injection can slip through.</p>
+          <div class="why why-bad">DataSentinel — reduces risk, doesn't eliminate it</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="critique-box">
+      <strong>The uncomfortable conclusion:</strong> If a credential is anywhere in the LLM's context window — whether from a tool response, system prompt, or conversation history — no amount of prompt engineering or output filtering can <em>guarantee</em> it won't leak. The only real guarantee is architectural: <strong>don't put the secret in the context at all</strong>.
+    </div>
+
+    <h3>How This Maps to Real Agent Stacks</h3>
+
+    <div class="agent-stack">
+      <h4>Claude Code / Claude Agent SDK <span class="agent-stack-badge" style="background:rgba(188,140,255,0.15);color:var(--purple)">Anthropic</span></h4>
+      <div class="stack-row">
+        <div class="stack-label">MCP tool calls</div>
+        <div class="stack-value">Tool responses go into context. If a tool returns a password, Claude sees it. <span class="tag-prob">Probabilistic</span><br>Fix: Use Vault-MCP so the tool authenticates without returning creds to Claude.</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-label">Bash tool</div>
+        <div class="stack-value">Can run <code>echo $SECRET</code> and the output enters context. <span class="tag-prob">Probabilistic</span><br>Fix: Use <code>allowedTools</code> in settings + IronClaw-style sandbox.</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-label">Permission system</div>
+        <div class="stack-value">Human approves each tool call in the terminal. <span class="tag-det">Deterministic</span> if in ask-every-time mode.<br>But: "allow always" mode downgrades to <span class="tag-prob">Probabilistic</span> (no review).</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-label">.claude/settings.json</div>
+        <div class="stack-value"><code>allowedTools</code> / <code>blockedTools</code> restricts which tools can be called. <span class="tag-det">Deterministic</span><br>Agent physically cannot call a blocked tool regardless of prompt injection.</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-label">Hooks (pre/post)</div>
+        <div class="stack-value">Shell scripts that run before/after tool calls. Can reject tool calls. <span class="tag-det">Deterministic</span><br>Runs outside LLM — can enforce URL allowlists, scan for secrets in args.</div>
+      </div>
+    </div>
+
+    <div class="agent-stack">
+      <h4>OpenClaw <span class="agent-stack-badge" style="background:rgba(88,166,255,0.15);color:var(--accent)">Open Source</span></h4>
+      <div class="stack-row">
+        <div class="stack-label">Skill execution</div>
+        <div class="stack-value">Skills run with agent's full permissions. Output goes to context. <span class="tag-prob">Probabilistic</span><br>Fix: SecureClaw monitors for exfiltration patterns. ClawSec verifies skill integrity.</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-label">Skill registry (npm)</div>
+        <div class="stack-value">Anyone can publish. No signing or audit. <span class="tag-prob">Probabilistic</span><br>Fix: ClawSec integrity verification, lockfile pinning, IronShell supply-chain checks.</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-label">Config permissions</div>
+        <div class="stack-value"><code>allowedCommands</code> in config restricts shell access. <span class="tag-det">Deterministic</span><br>Blocked commands cannot be executed regardless of prompt content.</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-label">Self-hosted (IronShell)</div>
+        <div class="stack-value">Network-level isolation via VPC, Tailscale, no open ports. <span class="tag-det">Deterministic</span><br>Even a fully compromised agent can't reach the internet if the firewall says no.</div>
+      </div>
+    </div>
+
+    <div class="agent-stack">
+      <h4>Generic MCP-based Agent <span class="agent-stack-badge" style="background:rgba(210,153,34,0.15);color:var(--orange)">Any Framework</span></h4>
+      <div class="stack-row">
+        <div class="stack-label">MCP OAuth 2.1</div>
+        <div class="stack-value">Token exchange happens at gateway level. LLM never sees the token. <span class="tag-det">Deterministic</span><br>MCP Gateway Registry, Aembit, AgentGateway all implement this.</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-label">MCP tool responses</div>
+        <div class="stack-value">Tool output is injected into LLM context by default. <span class="tag-prob">Probabilistic</span><br>The MCP spec has no built-in redaction. You need Vault-MCP or a filtering proxy.</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-label">Transport security</div>
+        <div class="stack-value">stdio (local) = no network exposure. SSE/HTTP = needs TLS. <span class="tag-det">Deterministic</span> for stdio.<br><span class="tag-prob">Probabilistic</span> for HTTP (depends on TLS config, cert pinning).</div>
+      </div>
+    </div>
+
+    <div class="mermaid-wrap">
+      <pre class="mermaid">
+graph TB
+    subgraph DET["DETERMINISTIC LAYER"]
+        direction TB
+        NET["Network allowlist / firewall"]
+        SANDBOX["WASM / container sandbox"]
+        BROKER["Credential broker (never in context)"]
+        HITL["Hard human-in-the-loop gate"]
+        EXPIRE["Auto-expiring tokens (minutes)"]
+        PERM["Tool permission blocklist"]
+    end
+
+    subgraph PROB["PROBABILISTIC LAYER"]
+        direction TB
+        GUARD["Prompt injection classifier"]
+        SCAN["Output secret scanner"]
+        VALID["LLM-based tool validator"]
+        REDACT["PII/secret redactor"]
+        TRAIN["Training data filter"]
+    end
+
+    subgraph NONE["NO PROTECTION"]
+        direction TB
+        PROMPT["'Never reveal secrets' in system prompt"]
+        TRUST["Trusting LLM judgment"]
+    end
+
+    DET ---|"Use these as your foundation"| PROB
+    PROB ---|"Add these as defense-in-depth"| NONE
+
+    style DET fill:#0d2818,stroke:#3fb950,color:#7ee787
+    style PROB fill:#3d2800,stroke:#d29922,color:#ffd866
+    style NONE fill:#5c0011,stroke:#f85149,color:#ffa4a4
+    style NET fill:#0d2818,stroke:#3fb950,color:#7ee787
+    style SANDBOX fill:#0d2818,stroke:#3fb950,color:#7ee787
+    style BROKER fill:#0d2818,stroke:#3fb950,color:#7ee787
+    style HITL fill:#0d2818,stroke:#3fb950,color:#7ee787
+    style EXPIRE fill:#0d2818,stroke:#3fb950,color:#7ee787
+    style PERM fill:#0d2818,stroke:#3fb950,color:#7ee787
+    style GUARD fill:#3d2800,stroke:#d29922,color:#ffd866
+    style SCAN fill:#3d2800,stroke:#d29922,color:#ffd866
+    style VALID fill:#3d2800,stroke:#d29922,color:#ffd866
+    style REDACT fill:#3d2800,stroke:#d29922,color:#ffd866
+    style TRAIN fill:#3d2800,stroke:#d29922,color:#ffd866
+    style PROMPT fill:#5c0011,stroke:#f85149,color:#ffa4a4
+    style TRUST fill:#5c0011,stroke:#f85149,color:#ffa4a4
+      </pre>
+    </div>
+
+    <div class="critique-box">
+      <strong>The right strategy:</strong> Build on deterministic foundations (network isolation, credential brokers, permission blocklists), then layer probabilistic defenses on top as defense-in-depth. Never rely on probabilistic alone. And never, ever rely on "the LLM will do the right thing."
+    </div>
+
   </div>
 </section>
 
