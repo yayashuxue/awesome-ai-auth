@@ -77,11 +77,11 @@ The credential **never reaches the LLM**. No prompt trick can extract what isn't
 
 | Method | Why It's Guaranteed | Tools |
 |--------|-------------------|-------|
-| **Credential broker** | LLM says "query DB", broker makes the call. LLM never sees the password. | [Vault-MCP](#deterministic--credential-brokers), [AgentPassVault](#deterministic--credential-brokers), [1Password](#deterministic--secrets-vaults), [AgentGateway](#deterministic--agent-identity--oauth), [Mozilla any-llm](#deterministic--credential-brokers) |
-| **Network allowlist** | Firewall blocks `fetch(evil.com)` at OS level, not LLM "deciding" not to. | [IronClaw](#deterministic--infrastructure-hardening), [IronShell](#deterministic--infrastructure-hardening), [NemoClaw](#deterministic--infrastructure-hardening) |
-| **WASM/container sandbox** | No network socket = no exfiltration. Period. | [IronClaw](#deterministic--infrastructure-hardening), [NemoClaw](#deterministic--infrastructure-hardening), gVisor, Firecracker |
-| **Auto-expiring tokens** | Leaked token expires in minutes. Math, not hope. | [HashiCorp Vault](#deterministic--secrets-vaults), [Aembit](#deterministic--agent-identity--oauth), [Infisical](#deterministic--secrets-vaults) |
-| **Hard HITL gate** | System blocks until human approves. Not "LLM asks permission". | [AgentPassVault](#deterministic--credential-brokers), [1Password](#deterministic--secrets-vaults) |
+| **Credential broker** | LLM says "query DB", broker makes the call. LLM never sees the password. | [Vault-MCP](#step-1-keep-secrets-out-of-llm-context-det), [AgentPassVault](#step-1-keep-secrets-out-of-llm-context-det), [1Password](#step-2-use-a-real-vault-det), [AgentGateway](#step-3-give-agents-identities-not-keys-det), [Mozilla any-llm](#step-1-keep-secrets-out-of-llm-context-det) |
+| **Network allowlist** | Firewall blocks `fetch(evil.com)` at OS level, not LLM "deciding" not to. | [IronClaw](#step-4-harden-the-infrastructure-det), [IronShell](#step-4-harden-the-infrastructure-det), [NemoClaw](#step-4-harden-the-infrastructure-det) |
+| **WASM/container sandbox** | No network socket = no exfiltration. Period. | [IronClaw](#step-4-harden-the-infrastructure-det), [NemoClaw](#step-4-harden-the-infrastructure-det), gVisor, Firecracker |
+| **Auto-expiring tokens** | Leaked token expires in minutes. Math, not hope. | [HashiCorp Vault](#step-2-use-a-real-vault-det), [Aembit](#step-3-give-agents-identities-not-keys-det), [Infisical](#step-2-use-a-real-vault-det) |
+| **Hard HITL gate** | System blocks until human approves. Not "LLM asks permission". | [AgentPassVault](#step-1-keep-secrets-out-of-llm-context-det), [1Password](#step-2-use-a-real-vault-det) |
 | **Tool blocklist** | Runtime prevents call regardless of prompt. | Claude Code `blockedTools`, OpenClaw `allowedCommands` |
 
 ### Probabilistic — helps but can be bypassed
@@ -90,11 +90,11 @@ Adds friction for attackers but **cannot guarantee** prevention.
 
 | Method | Why It Can Fail | Tools |
 |--------|----------------|-------|
-| **Injection classifiers** | Adversarial examples will always exist | [Llama Guard](#probabilistic--guardrails-defense-in-depth), [Prompt Shields](#probabilistic--guardrails-defense-in-depth), [NeMo Guardrails](#probabilistic--guardrails-defense-in-depth), [Guardrails AI](#probabilistic--guardrails-defense-in-depth) |
-| **Output scanning / redaction** | Misses base64, split exfiltration, novel formats | [Presidio](#probabilistic--guardrails-defense-in-depth), [GitGuardian ggshield](#probabilistic--guardrails-defense-in-depth), [DataSentinel](#probabilistic--guardrails-defense-in-depth) |
+| **Injection classifiers** | Adversarial examples will always exist | [Llama Guard](#step-5-add-guardrails-defense-in-depth-prob), [Prompt Shields](#step-5-add-guardrails-defense-in-depth-prob), [NeMo Guardrails](#step-5-add-guardrails-defense-in-depth-prob), [Guardrails AI](#step-5-add-guardrails-defense-in-depth-prob) |
+| **Output scanning / redaction** | Misses base64, split exfiltration, novel formats | [Presidio](#step-5-add-guardrails-defense-in-depth-prob), [GitGuardian ggshield](#step-5-add-guardrails-defense-in-depth-prob), [DataSentinel](#step-5-add-guardrails-defense-in-depth-prob) |
 | **System prompt "never reveal secrets"** | Any injection overrides it. Zero guarantee. | — |
-| **LLM-based validation** | Second LLM can also be tricked | [ShieldAgent](#probabilistic--guardrails-defense-in-depth), [LlamaFirewall](#probabilistic--guardrails-defense-in-depth) |
-| **Pattern-based audit** | Catches known patterns, novel attacks evade | [SecureClaw](#probabilistic--guardrails-defense-in-depth), [ClawSec](#probabilistic--guardrails-defense-in-depth) |
+| **LLM-based validation** | Second LLM can also be tricked | [ShieldAgent](#step-5-add-guardrails-defense-in-depth-prob), [LlamaFirewall](#step-5-add-guardrails-defense-in-depth-prob) |
+| **Pattern-based audit** | Catches known patterns, novel attacks evade | [SecureClaw](#step-5-add-guardrails-defense-in-depth-prob), [ClawSec](#step-5-add-guardrails-defense-in-depth-prob) |
 
 ```mermaid
 graph TB
@@ -124,16 +124,16 @@ For detailed breakdowns of Claude Code, OpenClaw, and MCP stacks, see the **[int
 
 Organized deterministic-first, probabilistic-later — matching the analysis above.
 
-### Deterministic · Credential Brokers
+### Step 1: Keep Secrets Out of LLM Context `DET`
 
-*Isolation layers that ensure secrets never enter the context window.*
+*Credential brokers and isolation layers that ensure secrets never enter the context window.*
 
 - **[Vault-MCP](https://github.com/Chill-AI-Space/vault-mcp)** ![](https://img.shields.io/github/stars/Chill-AI-Space/vault-mcp?style=flat-square&label=%E2%98%85) — MCP server for credential isolation. Agents use passwords without seeing them.
 - **[AgentPassVault](https://github.com/joshua5201/AgentPassVault)** ![](https://img.shields.io/github/stars/joshua5201/AgentPassVault?style=flat-square&label=%E2%98%85) — Zero-knowledge secrets, human-in-the-loop approval, lease-based access. Secrets never enter LLM context.
 - **[Mozilla any-llm](https://github.com/mozilla-ai/any-llm)** ![](https://img.shields.io/github/stars/mozilla-ai/any-llm?style=flat-square&label=%E2%98%85) — E2E encrypted API key vault. One virtual key across all providers.
 - **[Notte](https://github.com/nottelabs/notte)** ![](https://img.shields.io/github/stars/nottelabs/notte?style=flat-square&label=%E2%98%85) — Web agent framework with built-in token vault for AI agent auth and credential lifecycle management.
 
-### Deterministic · Secrets Vaults
+### Step 2: Use a Real Vault `DET`
 
 *Dynamic, short-lived, auto-rotated tokens from dedicated secrets platforms.*
 
@@ -142,7 +142,7 @@ Organized deterministic-first, probabilistic-later — matching the analysis abo
 - **[1Password Agentic AI](https://1password.com/solutions/agentic-ai)** — E2E encrypted + hard human approval gate. SDKs for Go, Python, JS. [Tutorial](https://developer.1password.com/docs/sdks/ai-agent/).
 - **[Doppler CLI](https://github.com/DopplerHQ/cli)** ![](https://img.shields.io/github/stars/DopplerHQ/cli?style=flat-square&label=%E2%98%85) — Cloud-native secrets with runtime injection. [LLM security guide](https://www.doppler.com/blog/advanced-llm-security).
 
-### Deterministic · Agent Identity & OAuth
+### Step 3: Give Agents Identities, Not Keys `DET`
 
 *Cryptographic identity and OAuth-based auth, replacing static bearer tokens.*
 
@@ -153,7 +153,7 @@ Organized deterministic-first, probabilistic-later — matching the analysis abo
 - **[Auth0 for GenAI](https://github.com/auth0/auth-for-genai)** ![](https://img.shields.io/github/stars/auth0/auth-for-genai?style=flat-square&label=%E2%98%85) — Auth framework for AI agents. [Token handling guide](https://auth0.com/blog/third-party-access-tokens-secure-ai-agents/).
 - **[Composio](https://github.com/ComposioHQ/composio)** ![](https://img.shields.io/github/stars/ComposioHQ/composio?style=flat-square&label=%E2%98%85) — 1000+ tool integrations with built-in auth for AI agents. [Security guide](https://composio.dev/blog/secure-ai-agent-infrastructure-guide).
 
-### Deterministic · Infrastructure Hardening
+### Step 4: Harden the Infrastructure `DET`
 
 *Network-level controls: sandboxes, allowlists, and OS hardening.*
 
@@ -161,7 +161,7 @@ Organized deterministic-first, probabilistic-later — matching the analysis abo
 - **[IronShell](https://github.com/Surfing-Claw/IronShell)** 🦞 ![](https://img.shields.io/github/stars/Surfing-Claw/IronShell?style=flat-square&label=%E2%98%85) — AWS CDK hardened hosting. Zero open ports, Tailscale VPN, time-limited secrets via AWS Secrets Manager.
 - **[IronClaw](https://github.com/nearai/ironclaw)** 🦞 ![](https://img.shields.io/github/stars/nearai/ironclaw?style=flat-square&label=%E2%98%85) — Rust AI assistant. AES-256-GCM, WASM sandbox, URL allowlist, active leak detection on all I/O.
 
-### Probabilistic · Guardrails (Defense in Depth)
+### Step 5: Add Guardrails (Defense in Depth) `PROB`
 
 *Classifiers, scanners, and audit plugins — adds friction but cannot guarantee prevention.*
 
