@@ -124,7 +124,7 @@ For detailed breakdowns of Claude Code, OpenClaw, and MCP stacks, see the **[int
 
 Organized deterministic-first, probabilistic-later — matching the analysis above.
 
-### Step 1: Keep Secrets Out of LLM Context `DET`
+### Step 1: Keep Secrets Out of LLM Context · *deterministic*
 
 *Credential brokers and isolation layers that ensure secrets never enter the context window.*
 
@@ -133,7 +133,7 @@ Organized deterministic-first, probabilistic-later — matching the analysis abo
 - **[Mozilla any-llm](https://github.com/mozilla-ai/any-llm)** ![](https://img.shields.io/github/stars/mozilla-ai/any-llm?style=flat-square&label=%E2%98%85) — E2E encrypted API key vault. One virtual key across all providers.
 - **[Notte](https://github.com/nottelabs/notte)** ![](https://img.shields.io/github/stars/nottelabs/notte?style=flat-square&label=%E2%98%85) — Web agent framework with built-in token vault for AI agent auth and credential lifecycle management.
 
-### Step 2: Use a Real Vault `DET`
+### Step 2: Use a Real Vault · *deterministic*
 
 *Dynamic, short-lived, auto-rotated tokens from dedicated secrets platforms.*
 
@@ -142,7 +142,7 @@ Organized deterministic-first, probabilistic-later — matching the analysis abo
 - **[1Password Agentic AI](https://1password.com/solutions/agentic-ai)** — E2E encrypted + hard human approval gate. SDKs for Go, Python, JS. [Tutorial](https://developer.1password.com/docs/sdks/ai-agent/).
 - **[Doppler CLI](https://github.com/DopplerHQ/cli)** ![](https://img.shields.io/github/stars/DopplerHQ/cli?style=flat-square&label=%E2%98%85) — Cloud-native secrets with runtime injection. [LLM security guide](https://www.doppler.com/blog/advanced-llm-security).
 
-### Step 3: Give Agents Identities, Not Keys `DET`
+### Step 3: Give Agents Identities, Not Keys · *deterministic*
 
 *Cryptographic identity and OAuth-based auth, replacing static bearer tokens.*
 
@@ -153,7 +153,7 @@ Organized deterministic-first, probabilistic-later — matching the analysis abo
 - **[Auth0 for GenAI](https://github.com/auth0/auth-for-genai)** ![](https://img.shields.io/github/stars/auth0/auth-for-genai?style=flat-square&label=%E2%98%85) — Auth framework for AI agents. [Token handling guide](https://auth0.com/blog/third-party-access-tokens-secure-ai-agents/).
 - **[Composio](https://github.com/ComposioHQ/composio)** ![](https://img.shields.io/github/stars/ComposioHQ/composio?style=flat-square&label=%E2%98%85) — 1000+ tool integrations with built-in auth for AI agents. [Security guide](https://composio.dev/blog/secure-ai-agent-infrastructure-guide).
 
-### Step 4: Harden the Infrastructure `DET`
+### Step 4: Harden the Infrastructure · *deterministic*
 
 *Network-level controls: sandboxes, allowlists, and OS hardening.*
 
@@ -161,7 +161,7 @@ Organized deterministic-first, probabilistic-later — matching the analysis abo
 - **[IronShell](https://github.com/Surfing-Claw/IronShell)** 🦞 ![](https://img.shields.io/github/stars/Surfing-Claw/IronShell?style=flat-square&label=%E2%98%85) — AWS CDK hardened hosting. Zero open ports, Tailscale VPN, time-limited secrets via AWS Secrets Manager.
 - **[IronClaw](https://github.com/nearai/ironclaw)** 🦞 ![](https://img.shields.io/github/stars/nearai/ironclaw?style=flat-square&label=%E2%98%85) — Rust AI assistant. AES-256-GCM, WASM sandbox, URL allowlist, active leak detection on all I/O.
 
-### Step 5: Add Guardrails (Defense in Depth) `PROB`
+### Step 5: Add Guardrails (Defense in Depth) · *probabilistic*
 
 *Classifiers, scanners, and audit plugins — adds friction but cannot guarantee prevention.*
 
