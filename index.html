@@ -251,6 +251,30 @@
     background: rgba(88,166,255,0.1);
     color: var(--accent);
   }
+  .tool-badge-det {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(63,185,80,0.15);
+    color: var(--green);
+    margin-right: 6px;
+    vertical-align: middle;
+    letter-spacing: 0.03em;
+  }
+  .tool-badge-prob {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(248,81,73,0.15);
+    color: var(--red);
+    margin-right: 6px;
+    vertical-align: middle;
+    letter-spacing: 0.03em;
+  }
 
   /* Guarantee spectrum */
   .spectrum {
@@ -412,6 +436,7 @@
     <a href="#checklist">Checklist</a>
     <a href="#guarantees">Deterministic vs Probabilistic</a>
     <a href="#attack-chains">Attack Chains</a>
+    <a href="#platforms">Platforms</a>
     <a href="#infra">Infrastructure</a>
     <a href="#credentials">Credentials</a>
     <a href="#detection">Detection</a>
@@ -817,6 +842,21 @@ graph LR
   </div>
 </section>
 
+<!-- Agent Platforms -->
+<section id="platforms">
+  <div class="container">
+    <h2>Agent Platforms</h2>
+    <p class="section-desc">Full-stack platforms with security built in.</p>
+    <div class="tool-grid">
+      <div class="tool-card">
+        <h4><span class="tool-badge-det">DET</span> <a href="https://nvidianews.nvidia.com/news/nvidia-announces-nemoclaw" target="_blank">NemoClaw</a></h4>
+        <p>NVIDIA's enterprise OpenClaw platform (GTC March 2026). <strong>OpenShell</strong> isolated sandbox runtime with policy-based security &amp; network guardrails. <strong>Privacy router</strong> lets agents use cloud models without exposing data. Runs locally on RTX/DGX.</p>
+        <span class="tool-tag">NVIDIA</span><span class="tool-tag">OpenShell</span><span class="tool-tag">Sandbox</span><span class="tool-tag">Privacy Router</span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Infrastructure Hardening -->
 <section id="infra">
   <div class="container">
@@ -824,12 +864,12 @@ graph LR
     <p class="section-desc">Lock down the host before you deploy the agent.</p>
     <div class="tool-grid">
       <div class="tool-card">
-        <h4><a href="https://github.com/Surfing-Claw/IronShell" target="_blank">IronShell</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://github.com/Surfing-Claw/IronShell" target="_blank">IronShell</a></h4>
         <p>IaC (AWS CDK) for hardened AI hosting. Zero open ports, Tailscale VPN mesh, OS hardening, time-limited secrets via AWS Secrets Manager.</p>
         <span class="tool-tag">AWS CDK</span><span class="tool-tag">Tailscale</span><span class="tool-tag">Supply Chain</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://github.com/nearai/ironclaw" target="_blank">IronClaw</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://github.com/nearai/ironclaw" target="_blank">IronClaw</a></h4>
         <p>Privacy-first AI assistant in Rust. AES-256-GCM encryption, WASM sandbox, URL allowlists, active leak detection on all I/O.</p>
         <span class="tool-tag">Rust</span><span class="tool-tag">WASM</span><span class="tool-tag">Leak Detection</span>
       </div>
@@ -844,22 +884,22 @@ graph LR
     <p class="section-desc">The agent uses the credential. The agent never sees the credential.</p>
     <div class="tool-grid">
       <div class="tool-card">
-        <h4><a href="https://github.com/joshua5201/AgentPassVault" target="_blank">AgentPassVault</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://github.com/joshua5201/AgentPassVault" target="_blank">AgentPassVault</a></h4>
         <p>Zero-knowledge secret manager. Public-key crypto, lease-based access, human-in-the-loop approval. Secrets never enter LLM context.</p>
         <span class="tool-tag">Zero-Knowledge</span><span class="tool-tag">HITL</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://github.com/Chill-AI-Space/vault-mcp" target="_blank">Vault-MCP</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://github.com/Chill-AI-Space/vault-mcp" target="_blank">Vault-MCP</a></h4>
         <p>MCP server for credential isolation — agents authenticate with services without seeing passwords.</p>
         <span class="tool-tag">MCP</span><span class="tool-tag">Isolation</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://github.com/mozilla-ai/any-llm" target="_blank">Mozilla any-llm</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://github.com/mozilla-ai/any-llm" target="_blank">Mozilla any-llm</a></h4>
         <p>E2E encrypted API key vault. One virtual key across all LLM providers. Usage tracking + budget management.</p>
         <span class="tool-tag">Mozilla</span><span class="tool-tag">E2E Encrypted</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://dev.to/nottelabs/notte-vault-the-solution-for-ai-agent-authentication-22a2" target="_blank">Notte Vault</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://dev.to/nottelabs/notte-vault-the-solution-for-ai-agent-authentication-22a2" target="_blank">Notte Vault</a></h4>
         <p>Token vault for AI agent auth with secure credential lifecycle management.</p>
         <span class="tool-tag">Token Vault</span>
       </div>
@@ -874,22 +914,22 @@ graph LR
     <p class="section-desc">Catch leaked keys before they leave your machine.</p>
     <div class="tool-grid">
       <div class="tool-card">
-        <h4><a href="https://github.com/GitGuardian/ggshield" target="_blank">GitGuardian ggshield</a></h4>
+        <h4><span class="tool-badge-prob">PROB</span> <a href="https://github.com/GitGuardian/ggshield" target="_blank">GitGuardian ggshield</a></h4>
         <p>500+ secret types detected. Pre-commit hook, GitHub Action, CLI. Also an <a href="https://github.com/GitGuardian/ggshield-skill">AI agent skill</a>.</p>
         <span class="tool-tag">Pre-commit</span><span class="tool-tag">CI/CD</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://blog.gitguardian.com/shifting-security-left-for-ai-agents-enforcing-ai-generated-code-security-with-gitguardian-mcp/" target="_blank">GitGuardian MCP</a></h4>
+        <h4><span class="tool-badge-prob">PROB</span> <a href="https://blog.gitguardian.com/shifting-security-left-for-ai-agents-enforcing-ai-generated-code-security-with-gitguardian-mcp/" target="_blank">GitGuardian MCP</a></h4>
         <p>Real-time secret scanning for AI-generated code via MCP integration.</p>
         <span class="tool-tag">MCP</span><span class="tool-tag">Real-time</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://github.com/microsoft/presidio" target="_blank">Presidio</a></h4>
+        <h4><span class="tool-badge-prob">PROB</span> <a href="https://github.com/microsoft/presidio" target="_blank">Presidio</a></h4>
         <p>Microsoft's PII/PHI detection & redaction for text, images, structured data.</p>
         <span class="tool-tag">Microsoft</span><span class="tool-tag">PII</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://arxiv.org/search/?query=DataSentinel" target="_blank">DataSentinel</a></h4>
+        <h4><span class="tool-badge-prob">PROB</span> <a href="https://arxiv.org/search/?query=DataSentinel" target="_blank">DataSentinel</a></h4>
         <p>Embedding classifier for injection + exfiltration detection at inference time (IEEE S&P '25).</p>
         <span class="tool-tag">Research</span><span class="tool-tag">Classifier</span>
       </div>
@@ -904,22 +944,22 @@ graph LR
     <p class="section-desc">Dynamic, short-lived, auto-rotated. Never hardcode again.</p>
     <div class="tool-grid">
       <div class="tool-card">
-        <h4><a href="https://developer.hashicorp.com/validated-patterns/vault/ai-agent-identity-with-hashicorp-vault" target="_blank">HashiCorp Vault</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://developer.hashicorp.com/validated-patterns/vault/ai-agent-identity-with-hashicorp-vault" target="_blank">HashiCorp Vault</a></h4>
         <p>Dynamic secrets via OAuth 2.0. JIT generation, auto-revocation, RBAC. <a href="https://www.hashicorp.com/en/blog/managing-openai-api-keys-with-hashicorp-vault-s-dynamic-secrets-plugin">OpenAI plugin</a>.</p>
         <span class="tool-tag">Dynamic Secrets</span><span class="tool-tag">OAuth</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://github.com/Infisical/infisical" target="_blank">Infisical</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://github.com/Infisical/infisical" target="_blank">Infisical</a></h4>
         <p>Open-source secrets + certs. Auto-rotation, agent injection, SDKs for 6 languages. <a href="https://infisical.com/blog/secure-secrets-management-for-cursor-cloud-agents">AI agent guide</a>.</p>
         <span class="tool-tag">Open Source</span><span class="tool-tag">Auto-rotate</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://1password.com/solutions/agentic-ai" target="_blank">1Password Agentic AI</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://1password.com/solutions/agentic-ai" target="_blank">1Password Agentic AI</a></h4>
         <p>E2E encrypted credential delivery with human approval. SDKs for Go, Python, JS.</p>
         <span class="tool-tag">E2E Encrypted</span><span class="tool-tag">HITL</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://www.doppler.com/" target="_blank">Doppler</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://www.doppler.com/" target="_blank">Doppler</a></h4>
         <p>Cloud-native secrets management. <a href="https://www.doppler.com/blog/advanced-llm-security">LLM security guide</a>.</p>
         <span class="tool-tag">Cloud-native</span>
       </div>
@@ -934,17 +974,17 @@ graph LR
     <p class="section-desc">Drop-in security for your agent framework.</p>
     <div class="tool-grid">
       <div class="tool-card">
-        <h4><a href="https://github.com/adversa-ai/secureclaw" target="_blank">SecureClaw</a></h4>
+        <h4><span class="tool-badge-prob">PROB</span> <a href="https://github.com/adversa-ai/secureclaw" target="_blank">SecureClaw</a></h4>
         <p>OWASP-aligned. 56 audit checks, 5 hardening modules, 70+ injection patterns, exfiltration chain detection.</p>
         <span class="tool-tag">OWASP</span><span class="tool-tag">Audit</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://github.com/prompt-security/clawsec" target="_blank">ClawSec</a></h4>
+        <h4><span class="tool-badge-prob">PROB</span> <a href="https://github.com/prompt-security/clawsec" target="_blank">ClawSec</a></h4>
         <p>Security suite for OpenClaw/NanoClaw. Drift detection, skill integrity verification, NIST NVD feed.</p>
         <span class="tool-tag">Integrity</span><span class="tool-tag">NIST</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://arxiv.org/search/?query=LLamaFirewall" target="_blank">LLamaFirewall</a></h4>
+        <h4><span class="tool-badge-prob">PROB</span> <a href="https://arxiv.org/search/?query=LLamaFirewall" target="_blank">LLamaFirewall</a></h4>
         <p>Meta's system-level defense framework for LLM agents.</p>
         <span class="tool-tag">Meta</span><span class="tool-tag">Research</span>
       </div>
@@ -959,32 +999,32 @@ graph LR
     <p class="section-desc">Agents need identities, not just API keys.</p>
     <div class="tool-grid">
       <div class="tool-card">
-        <h4><a href="https://github.com/agentic-community/mcp-gateway-registry" target="_blank">MCP Gateway Registry</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://github.com/agentic-community/mcp-gateway-registry" target="_blank">MCP Gateway Registry</a></h4>
         <p>Enterprise MCP gateway with OAuth, dynamic tool discovery, Keycloak/Entra, M2M service accounts.</p>
         <span class="tool-tag">OAuth</span><span class="tool-tag">Enterprise</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://aembit.io/blog/securing-ai-agents-without-secrets/" target="_blank">Aembit</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://aembit.io/blog/securing-ai-agents-without-secrets/" target="_blank">Aembit</a></h4>
         <p>Workload identity via cryptographic attestation. Zero static secrets. <a href="https://aembit.io/blog/mcp-oauth-2-1-pkce-and-the-future-of-ai-authorization/">MCP + OAuth 2.1 + PKCE</a>.</p>
         <span class="tool-tag">Workload Identity</span><span class="tool-tag">Zero Secrets</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://www.solo.io/blog/aaif-announcement-agentgateway" target="_blank">AgentGateway (Solo.io)</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://www.solo.io/blog/aaif-announcement-agentgateway" target="_blank">AgentGateway (Solo.io)</a></h4>
         <p>Manages OAuth callbacks for MCP servers. Injects creds only when needed — LLM never sees tokens.</p>
         <span class="tool-tag">Gateway</span><span class="tool-tag">OAuth</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://github.com/BillionsNetwork/verified-agent-identity" target="_blank">Verified-Agent-Identity</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://github.com/BillionsNetwork/verified-agent-identity" target="_blank">Verified-Agent-Identity</a></h4>
         <p>Decentralized identity (DID) toolkit for AI agents using iden3 protocol.</p>
         <span class="tool-tag">DID</span><span class="tool-tag">Decentralized</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://auth0.com/blog/third-party-access-tokens-secure-ai-agents/" target="_blank">Auth0 for AI Agents</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://auth0.com/blog/third-party-access-tokens-secure-ai-agents/" target="_blank">Auth0 for AI Agents</a></h4>
         <p>Secure third-party token handling for agent workflows.</p>
         <span class="tool-tag">Auth0</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://composio.dev/blog/secure-ai-agent-infrastructure-guide" target="_blank">Composio</a></h4>
+        <h4><span class="tool-badge-det">DET</span> <a href="https://composio.dev/blog/secure-ai-agent-infrastructure-guide" target="_blank">Composio</a></h4>
         <p>Secure & scalable agent infrastructure platform. Auth-to-action patterns.</p>
         <span class="tool-tag">Platform</span>
       </div>
@@ -999,37 +1039,37 @@ graph LR
     <p class="section-desc">Stop the #1 attack vector for AI agents.</p>
     <div class="tool-grid">
       <div class="tool-card">
-        <h4><a href="https://github.com/NVIDIA/NeMo-Guardrails" target="_blank">NeMo Guardrails</a></h4>
+        <h4><span class="tool-badge-prob">PROB</span> <a href="https://github.com/NVIDIA/NeMo-Guardrails" target="_blank">NeMo Guardrails</a></h4>
         <p>NVIDIA's programmable guardrails toolkit for LLM apps (EMNLP '23).</p>
         <span class="tool-tag">NVIDIA</span><span class="tool-tag">Production</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://github.com/meta-llama/PurpleLlama" target="_blank">Llama Guard + Prompt Guard 2</a></h4>
+        <h4><span class="tool-badge-prob">PROB</span> <a href="https://github.com/meta-llama/PurpleLlama" target="_blank">Llama Guard + Prompt Guard 2</a></h4>
         <p>Meta's content safety classifier + dedicated injection detection model.</p>
         <span class="tool-tag">Meta</span><span class="tool-tag">Classifier</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://github.com/guardrails-ai/guardrails" target="_blank">Guardrails AI</a></h4>
+        <h4><span class="tool-badge-prob">PROB</span> <a href="https://github.com/guardrails-ai/guardrails" target="_blank">Guardrails AI</a></h4>
         <p>Structure, type, and quality guarantees for LLM outputs.</p>
         <span class="tool-tag">Validation</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://learn.microsoft.com/en-us/azure/ai-services/content-safety/concepts/jailbreak-detection" target="_blank">Microsoft Prompt Shields</a></h4>
+        <h4><span class="tool-badge-prob">PROB</span> <a href="https://learn.microsoft.com/en-us/azure/ai-services/content-safety/concepts/jailbreak-detection" target="_blank">Microsoft Prompt Shields</a></h4>
         <p>Injection & jailbreak detection service.</p>
         <span class="tool-tag">Azure</span><span class="tool-tag">Service</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://arxiv.org/search/?query=StruQ+prompt+injection" target="_blank">StruQ</a></h4>
+        <h4><span class="tool-badge-prob">PROB</span> <a href="https://arxiv.org/search/?query=StruQ+prompt+injection" target="_blank">StruQ</a></h4>
         <p>Structured query defense (USENIX Security '25).</p>
         <span class="tool-tag">Research</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://arxiv.org/search/?query=SecAlign+prompt+injection" target="_blank">SecAlign</a></h4>
+        <h4><span class="tool-badge-prob">PROB</span> <a href="https://arxiv.org/search/?query=SecAlign+prompt+injection" target="_blank">SecAlign</a></h4>
         <p>Security alignment training for LLMs (arXiv '25).</p>
         <span class="tool-tag">Research</span>
       </div>
       <div class="tool-card">
-        <h4><a href="https://arxiv.org/search/?query=ShieldAgent+LLM" target="_blank">ShieldAgent</a></h4>
+        <h4><span class="tool-badge-prob">PROB</span> <a href="https://arxiv.org/search/?query=ShieldAgent+LLM" target="_blank">ShieldAgent</a></h4>
         <p>Agent-based guardrail system (ICML '25).</p>
         <span class="tool-tag">Research</span>
       </div>
