@@ -75,12 +75,12 @@ These work because the credential **physically never reaches the LLM**.
 
 | Method | Why It's Guaranteed | Tools |
 |--------|-------------------|-------|
-| **Credential broker** | LLM says "query DB", broker makes the call. LLM never sees the password. | [Vault-MCP](#credential-managers) | [AgentPassVault](#credential-managers) | [1Password](#secrets-management) | [AgentGateway](#oauth--identity) |
-| **Network allowlist** | Firewall blocks `fetch(evil.com)` at OS level, not LLM "deciding" not to. | [IronClaw](#infrastructure-hardening) | [IronShell](#infrastructure-hardening) | [NemoClaw OpenShell](#agent-platforms) |
-| **WASM/container sandbox** | No network socket = no exfiltration. Period. | [IronClaw](#infrastructure-hardening) | [NemoClaw OpenShell](#agent-platforms) |
-| **Auto-expiring tokens** | Leaked token expires in minutes. Math, not hope. | [HashiCorp Vault](#secrets-management) | [Aembit](#oauth--identity) |
-| **Hard HITL gate** | System blocks until human approves. Not "LLM asks permission". | [AgentPassVault](#credential-managers) | [1Password](#secrets-management) |
-| **Tool blocklist** | Runtime prevents call regardless of prompt. | Claude Code `blockedTools` | OpenClaw `allowedCommands` |
+| **Credential broker** | LLM says "query DB", broker makes the call. LLM never sees the password. | [Vault-MCP](#credential-managers--det), [AgentPassVault](#credential-managers--det), [1Password](#secrets-management--det), [AgentGateway](#oauth--identity--det), [Mozilla any-llm](#credential-managers--det) |
+| **Network allowlist** | Firewall blocks `fetch(evil.com)` at OS level, not LLM "deciding" not to. | [IronClaw](#infrastructure-hardening--det), [IronShell](#infrastructure-hardening--det), [NemoClaw OpenShell](#agent-platforms--det) |
+| **WASM/container sandbox** | No network socket = no exfiltration. Period. | [IronClaw](#infrastructure-hardening--det), [NemoClaw OpenShell](#agent-platforms--det), gVisor, Firecracker |
+| **Auto-expiring tokens** | Leaked token expires in minutes. Math, not hope. | [HashiCorp Vault](#secrets-management--det), [Aembit](#oauth--identity--det), [Infisical](#secrets-management--det) |
+| **Hard HITL gate** | System blocks until human approves. Not "LLM asks permission". | [AgentPassVault](#credential-managers--det), [1Password](#secrets-management--det) |
+| **Tool blocklist** | Runtime prevents call regardless of prompt. | Claude Code `blockedTools`, OpenClaw `allowedCommands` |
 
 ### `PROB` Probabilistic (Best-Effort)
 
@@ -88,10 +88,11 @@ Helpful but **can be bypassed** by adversarial inputs, novel encodings, or multi
 
 | Method | Why It Can Fail | Tools |
 |--------|----------------|-------|
-| **Injection classifiers** | Adversarial examples will always exist | [Llama Guard](#prompt-injection-defense) | [Prompt Shields](#prompt-injection-defense) | [NeMo Guardrails](#prompt-injection-defense) |
-| **Output scanning** | Misses base64, split exfiltration, novel formats | [Presidio](#secrets-detection) | [GitGuardian](#secrets-detection) |
-| **"Never reveal secrets" prompt** | Any injection overrides it. Zero guarantee. | — |
-| **LLM-based validation** | Second LLM can also be tricked | [ShieldAgent](#prompt-injection-defense) | [LLamaFirewall](#agent-security-plugins) |
+| **Injection classifiers** | Adversarial examples will always exist | [Llama Guard](#prompt-injection-defense--prob), [Prompt Shields](#prompt-injection-defense--prob), [NeMo Guardrails](#prompt-injection-defense--prob), [Guardrails AI](#prompt-injection-defense--prob) |
+| **Output scanning / redaction** | Misses base64, split exfiltration, novel formats | [Presidio](#secrets-detection--prob), [GitGuardian ggshield](#secrets-detection--prob), [DataSentinel](#secrets-detection--prob) |
+| **System prompt "never reveal secrets"** | Any injection overrides it. Zero guarantee. | — |
+| **LLM-based validation** | Second LLM can also be tricked | [ShieldAgent](#prompt-injection-defense--prob), [LLamaFirewall](#agent-security-plugins--prob) |
+| **Pattern-based audit** | Catches known patterns, novel attacks evade | [SecureClaw](#agent-security-plugins--prob), [ClawSec](#agent-security-plugins--prob) |
 
 ```mermaid
 graph TB
@@ -121,57 +122,57 @@ For detailed breakdowns of Claude Code, OpenClaw, and MCP stacks, see the **[int
 
 ## Tools
 
-### Agent Platforms
+### Agent Platforms · `DET`
 
-- `DET` **[NemoClaw](https://nvidianews.nvidia.com/news/nvidia-announces-nemoclaw)** — NVIDIA's enterprise-grade OpenClaw platform (announced GTC March 2026). Includes **OpenShell** isolated sandbox runtime with policy-based security, network guardrails, and a **privacy router** that lets agents use cloud models without exposing sensitive data. Runs locally on RTX/DGX hardware. Combines Nemotron open models + NVIDIA Agent Toolkit.
+- **[NemoClaw](https://nvidianews.nvidia.com/news/nvidia-announces-nemoclaw)** — NVIDIA's enterprise OpenClaw platform (GTC March 2026). **OpenShell** isolated sandbox with policy-based security & network guardrails. **Privacy router** lets agents use cloud models without exposing data. Runs locally on RTX/DGX. Nemotron open models + NVIDIA Agent Toolkit.
 
-### Infrastructure Hardening
+### Infrastructure Hardening · `DET`
 
-- `DET` **[IronShell](https://github.com/Surfing-Claw/IronShell)** — AWS CDK hardened hosting. Zero open ports, Tailscale VPN, time-limited secrets via AWS Secrets Manager, supply-chain-safe installs.
-- `DET` **[IronClaw](https://github.com/nearai/ironclaw)** — Rust AI assistant. AES-256-GCM, WASM sandbox, URL allowlist, active leak detection on all I/O.
+- **[IronShell](https://github.com/Surfing-Claw/IronShell)** — AWS CDK hardened hosting. Zero open ports, Tailscale VPN, time-limited secrets via AWS Secrets Manager, supply-chain-safe installs.
+- **[IronClaw](https://github.com/nearai/ironclaw)** — Rust AI assistant. AES-256-GCM, WASM sandbox, URL allowlist, active leak detection on all I/O.
 
-### Credential Managers
+### Credential Managers · `DET`
 
-- `DET` **[AgentPassVault](https://github.com/joshua5201/AgentPassVault)** — Zero-knowledge secrets, human-in-the-loop approval, lease-based access. Secrets never enter LLM context.
-- `DET` **[Vault-MCP](https://github.com/Chill-AI-Space/vault-mcp)** — MCP server for credential isolation. Agents use passwords without seeing them.
-- `DET` **[Mozilla any-llm](https://github.com/mozilla-ai/any-llm)** — E2E encrypted API key vault. One virtual key across all providers.
-- `DET` **[Notte Vault](https://dev.to/nottelabs/notte-vault-the-solution-for-ai-agent-authentication-22a2)** — Token vault for AI agent auth with credential lifecycle management.
+- **[AgentPassVault](https://github.com/joshua5201/AgentPassVault)** — Zero-knowledge secrets, human-in-the-loop approval, lease-based access. Secrets never enter LLM context.
+- **[Vault-MCP](https://github.com/Chill-AI-Space/vault-mcp)** — MCP server for credential isolation. Agents use passwords without seeing them.
+- **[Mozilla any-llm](https://github.com/mozilla-ai/any-llm)** — E2E encrypted API key vault. One virtual key across all providers.
+- **[Notte Vault](https://dev.to/nottelabs/notte-vault-the-solution-for-ai-agent-authentication-22a2)** — Token vault for AI agent auth with credential lifecycle management.
 
-### Secrets Detection
+### Secrets Detection · `PROB`
 
-- `PROB` **[GitGuardian ggshield](https://github.com/GitGuardian/ggshield)** — 500+ secret types. Pre-commit hook, GitHub Action, [AI agent skill](https://github.com/GitGuardian/ggshield-skill). Catches 90%+ but novel encodings can slip through.
-- `PROB` **[Presidio](https://github.com/microsoft/presidio)** — Microsoft's PII/PHI detection & redaction. Pattern-based, so novel formats may evade.
-- `PROB` **[DataSentinel](https://arxiv.org/search/?query=DataSentinel)** — Embedding classifier for exfiltration detection at inference time (IEEE S&P '25).
+- **[GitGuardian ggshield](https://github.com/GitGuardian/ggshield)** — 500+ secret types. Pre-commit hook, GitHub Action, [AI agent skill](https://github.com/GitGuardian/ggshield-skill).
+- **[Presidio](https://github.com/microsoft/presidio)** — Microsoft's PII/PHI detection & redaction.
+- **[DataSentinel](https://arxiv.org/search/?query=DataSentinel)** — Embedding classifier for exfiltration detection at inference time (IEEE S&P '25).
 
-### Secrets Management
+### Secrets Management · `DET`
 
-- `DET` **[HashiCorp Vault](https://developer.hashicorp.com/validated-patterns/vault/ai-agent-identity-with-hashicorp-vault)** — Dynamic secrets via OAuth 2.0. JIT generation, auto-revocation, RBAC. [OpenAI key plugin](https://www.hashicorp.com/en/blog/managing-openai-api-keys-with-hashicorp-vault-s-dynamic-secrets-plugin).
-- `DET` **[Infisical](https://github.com/Infisical/infisical)** — Open-source. Auto-rotation, agent-based injection, 6 language SDKs. [AI agent guide](https://infisical.com/blog/secure-secrets-management-for-cursor-cloud-agents).
-- `DET` **[1Password Agentic AI](https://1password.com/solutions/agentic-ai)** — E2E encrypted + hard human approval gate. SDKs for Go, Python, JS. [Tutorial](https://developer.1password.com/docs/sdks/ai-agent/).
-- `DET` **[Doppler](https://www.doppler.com/)** — Cloud-native secrets with runtime injection. [LLM security guide](https://www.doppler.com/blog/advanced-llm-security).
+- **[HashiCorp Vault](https://developer.hashicorp.com/validated-patterns/vault/ai-agent-identity-with-hashicorp-vault)** — Dynamic secrets via OAuth 2.0. JIT generation, auto-revocation, RBAC. [OpenAI key plugin](https://www.hashicorp.com/en/blog/managing-openai-api-keys-with-hashicorp-vault-s-dynamic-secrets-plugin).
+- **[Infisical](https://github.com/Infisical/infisical)** — Open-source. Auto-rotation, agent-based injection, 6 language SDKs. [AI agent guide](https://infisical.com/blog/secure-secrets-management-for-cursor-cloud-agents).
+- **[1Password Agentic AI](https://1password.com/solutions/agentic-ai)** — E2E encrypted + hard human approval gate. SDKs for Go, Python, JS. [Tutorial](https://developer.1password.com/docs/sdks/ai-agent/).
+- **[Doppler](https://www.doppler.com/)** — Cloud-native secrets with runtime injection. [LLM security guide](https://www.doppler.com/blog/advanced-llm-security).
 
-### Agent Security Plugins
+### Agent Security Plugins · `PROB`
 
-- `PROB` **[SecureClaw](https://github.com/adversa-ai/secureclaw)** — OWASP-aligned. 56 audit checks, 70+ injection patterns, exfiltration chain detection. Pattern-based so novel attacks may evade.
-- `PROB` **[ClawSec](https://github.com/prompt-security/clawsec)** — Drift detection, skill integrity verification, NIST NVD feed. Catches known threats.
-- `PROB` **[LLamaFirewall](https://arxiv.org/search/?query=LLamaFirewall)** — Meta's LLM-based defense framework. Uses a second model to validate — helpful but the validator can also be tricked.
+- **[SecureClaw](https://github.com/adversa-ai/secureclaw)** — OWASP-aligned. 56 audit checks, 70+ injection patterns, exfiltration chain detection.
+- **[ClawSec](https://github.com/prompt-security/clawsec)** — Drift detection, skill integrity verification, NIST NVD feed.
+- **[LLamaFirewall](https://arxiv.org/search/?query=LLamaFirewall)** — Meta's LLM-based defense framework. Second model validates tool calls.
 
-### OAuth & Identity
+### OAuth & Identity · `DET`
 
-- `DET` **[MCP Gateway Registry](https://github.com/agentic-community/mcp-gateway-registry)** — Enterprise OAuth gateway, Keycloak/Entra, M2M accounts. Token exchange at gateway = LLM never sees tokens.
-- `DET` **[Aembit](https://aembit.io/blog/securing-ai-agents-without-secrets/)** — Workload identity via cryptographic attestation. Zero static secrets. [MCP + OAuth 2.1](https://aembit.io/blog/mcp-oauth-2-1-pkce-and-the-future-of-ai-authorization/).
-- `DET` **[AgentGateway](https://www.solo.io/blog/aaif-announcement-agentgateway)** — OAuth callbacks for MCP. Injects creds only when needed — LLM never sees tokens.
-- `DET` **[Verified-Agent-Identity](https://github.com/BillionsNetwork/verified-agent-identity)** — Decentralized identity (DID) for AI agents via iden3 protocol.
-- `DET` **[Auth0 for AI Agents](https://auth0.com/blog/third-party-access-tokens-secure-ai-agents/)** — Secure third-party token handling.
-- `DET` **[Composio](https://composio.dev/blog/secure-ai-agent-infrastructure-guide)** — Auth-to-action platform.
+- **[MCP Gateway Registry](https://github.com/agentic-community/mcp-gateway-registry)** — Enterprise OAuth gateway, Keycloak/Entra, M2M accounts. Token exchange at gateway = LLM never sees tokens.
+- **[Aembit](https://aembit.io/blog/securing-ai-agents-without-secrets/)** — Workload identity via cryptographic attestation. Zero static secrets. [MCP + OAuth 2.1](https://aembit.io/blog/mcp-oauth-2-1-pkce-and-the-future-of-ai-authorization/).
+- **[AgentGateway](https://www.solo.io/blog/aaif-announcement-agentgateway)** — OAuth callbacks for MCP. Injects creds only when needed — LLM never sees tokens.
+- **[Verified-Agent-Identity](https://github.com/BillionsNetwork/verified-agent-identity)** — Decentralized identity (DID) for AI agents via iden3 protocol.
+- **[Auth0 for AI Agents](https://auth0.com/blog/third-party-access-tokens-secure-ai-agents/)** — Secure third-party token handling.
+- **[Composio](https://composio.dev/blog/secure-ai-agent-infrastructure-guide)** — Auth-to-action platform.
 
-### Prompt Injection Defense
+### Prompt Injection Defense · `PROB`
 
-- `PROB` **[NeMo Guardrails](https://github.com/NVIDIA/NeMo-Guardrails)** — NVIDIA's programmable guardrails (EMNLP '23). Rule + ML based.
-- `PROB` **[Llama Guard](https://github.com/meta-llama/PurpleLlama)** + **Prompt Guard 2** — Meta's safety classifiers. High accuracy but adversarial bypasses exist.
-- `PROB` **[Guardrails AI](https://github.com/guardrails-ai/guardrails)** — Output structure & quality guarantees.
-- `PROB` **[Microsoft Prompt Shields](https://learn.microsoft.com/en-us/azure/ai-services/content-safety/concepts/jailbreak-detection)** — Cloud injection detection service.
-- `PROB` **[StruQ](https://arxiv.org/search/?query=StruQ+prompt+injection)** / **[SecAlign](https://arxiv.org/search/?query=SecAlign+prompt+injection)** / **[ShieldAgent](https://arxiv.org/search/?query=ShieldAgent+LLM)** — Research (USENIX '25, ICML '25).
+- **[NeMo Guardrails](https://github.com/NVIDIA/NeMo-Guardrails)** — NVIDIA's programmable guardrails (EMNLP '23). Rule + ML based.
+- **[Llama Guard](https://github.com/meta-llama/PurpleLlama)** + **Prompt Guard 2** — Meta's safety classifiers.
+- **[Guardrails AI](https://github.com/guardrails-ai/guardrails)** — Output structure & quality guarantees.
+- **[Microsoft Prompt Shields](https://learn.microsoft.com/en-us/azure/ai-services/content-safety/concepts/jailbreak-detection)** — Cloud injection detection service.
+- **[StruQ](https://arxiv.org/search/?query=StruQ+prompt+injection)** / **[SecAlign](https://arxiv.org/search/?query=SecAlign+prompt+injection)** / **[ShieldAgent](https://arxiv.org/search/?query=ShieldAgent+LLM)** — Research (USENIX '25, ICML '25).
 
 ### Guardrails & Benchmarks
 
