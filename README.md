@@ -183,6 +183,7 @@ Organized deterministic-first, probabilistic-later — matching the analysis abo
 - **[SecureClaw](https://github.com/adversa-ai/secureclaw)** 🦞 ![](https://img.shields.io/github/stars/adversa-ai/secureclaw?style=flat-square&label=%E2%98%85) — OWASP-aligned. 56 audit checks, 70+ injection patterns, exfiltration chain detection.
 - **[ClawSec](https://github.com/prompt-security/clawsec)** 🦞 ![](https://img.shields.io/github/stars/prompt-security/clawsec?style=flat-square&label=%E2%98%85) — Drift detection, skill integrity verification, NIST NVD feed.
 - **[LlamaFirewall](https://arxiv.org/abs/2505.03574)** — Meta's open-source guardrail system for secure AI agents.
+- **[ai-evaluation](https://github.com/future-agi/ai-evaluation)** ![](https://img.shields.io/github/stars/future-agi/ai-evaluation?style=flat-square&label=%E2%98%85) — LLM evaluation framework with 50+ metrics, LLM-as-Judge, and guardrail scanners (jailbreak, PII, injection).
 
 ### Benchmarks & Evaluation
 
