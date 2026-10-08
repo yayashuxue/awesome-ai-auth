@@ -152,6 +152,7 @@ Organized deterministic-first, probabilistic-later — matching the analysis abo
 - **[MCP Gateway Registry](https://github.com/agentic-community/mcp-gateway-registry)** ![](https://img.shields.io/github/stars/agentic-community/mcp-gateway-registry?style=flat-square&label=%E2%98%85) — Enterprise OAuth gateway, Keycloak/Entra, M2M accounts.
 - **[Verified-Agent-Identity](https://github.com/BillionsNetwork/verified-agent-identity)** ![](https://img.shields.io/github/stars/BillionsNetwork/verified-agent-identity?style=flat-square&label=%E2%98%85) — Decentralized identity (DID) for AI agents via iden3 protocol.
 - **[Auth0 for GenAI](https://github.com/auth0/auth-for-genai)** ![](https://img.shields.io/github/stars/auth0/auth-for-genai?style=flat-square&label=%E2%98%85) — Auth framework for AI agents. [Token handling guide](https://auth0.com/blog/third-party-access-tokens-secure-ai-agents/).
+- **[Scalekit](https://www.scalekit.com/agentkit)** — Scalekit's AgentKit provides auth and actions on behalf of users, with 500+ connectors and 20,000+ tools. [Quickstart](https://docs.scalekit.com/agentkit/quickstart/).
 - **[Composio](https://github.com/ComposioHQ/composio)** ![](https://img.shields.io/github/stars/ComposioHQ/composio?style=flat-square&label=%E2%98%85) — 1000+ tool integrations with built-in auth for AI agents. [Security guide](https://composio.dev/blog/secure-ai-agent-infrastructure-guide).
 
 ### Step 4: Harden the Infrastructure · *deterministic*
