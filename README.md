@@ -133,6 +133,7 @@ Organized deterministic-first, probabilistic-later — matching the analysis abo
 - **[AgentPassVault](https://github.com/joshua5201/AgentPassVault)** ![](https://img.shields.io/github/stars/joshua5201/AgentPassVault?style=flat-square&label=%E2%98%85) — Zero-knowledge secrets, human-in-the-loop approval, lease-based access. Secrets never enter LLM context.
 - **[Mozilla any-llm](https://github.com/mozilla-ai/any-llm)** ![](https://img.shields.io/github/stars/mozilla-ai/any-llm?style=flat-square&label=%E2%98%85) — E2E encrypted API key vault. One virtual key across all providers.
 - **[Notte](https://github.com/nottelabs/notte)** ![](https://img.shields.io/github/stars/nottelabs/notte?style=flat-square&label=%E2%98%85) — Web agent framework with built-in token vault for AI agent auth and credential lifecycle management.
+- **[Agentic Identity Broker](https://github.com/zalando-incubator/agentic-identity-broker)** ![](https://img.shields.io/github/stars/zalando-incubator/agentic-identity-broker?style=flat-square&label=☆) — Identity broker for AI agents with OAuth2 delegation and consent management.
 
 ### Step 2: Use a Real Vault · *deterministic*
 
